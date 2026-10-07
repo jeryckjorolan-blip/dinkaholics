@@ -1,0 +1,178 @@
+<%- include('partials/header') %>
+
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-brand-400">Admin Panel</h1>
+  <p class="text-stone-400 mt-1">Manage users, players, and manually add game results</p>
+</div>
+
+<% if (message) { %>
+  <div class="bg-green-900/40 border border-green-700 text-green-200 px-4 py-3 rounded-lg mb-6 text-sm">
+    <%= message.replace(/\+/g, ' ') %>
+  </div>
+<% } %>
+
+<div class="grid lg:grid-cols-2 gap-8">
+
+  <!-- Create User -->
+  <section class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+    <h2 class="text-lg font-semibold mb-4">Create Club Member</h2>
+    <form method="POST" action="/admin/users" class="space-y-3">
+      <input type="text" name="username" placeholder="Username" required
+        class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <input type="text" name="display_name" placeholder="Display Name" required
+        class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <input type="password" name="password" placeholder="Password" required
+        class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <select name="role" class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2">
+        <option value="member">Member</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 px-4 py-2 rounded-lg transition">Create User</button>
+    </form>
+
+    <h3 class="text-sm font-medium text-stone-400 mt-6 mb-2">Existing Users</h3>
+    <ul class="space-y-2 text-sm">
+      <% users.forEach(u => { %>
+        <li class="flex justify-between items-center bg-navy-900 rounded-lg px-3 py-2">
+          <span>
+            <span class="font-medium"><%= u.display_name %></span>
+            <span class="text-stone-500">(@<%= u.username %>)</span>
+            <% if (u.role === 'admin') { %><span class="text-brand-400 text-xs ml-1">admin</span><% } %>
+          </span>
+          <% if (u.id !== currentUser.id) { %>
+            <form method="POST" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('Delete user?')">
+              <button class="text-red-400 hover:text-red-300 text-xs">Delete</button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- Players -->
+  <section class="bg-navy-800 border border-navy-600 rounded-xl p-6">
+    <h2 class="text-lg font-semibold mb-4">Players</h2>
+    <form method="POST" action="/admin/players" class="flex gap-2 mb-4">
+      <input type="text" name="name" placeholder="New player name" required
+        class="flex-1 bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 px-4 py-2 rounded-lg transition">Add</button>
+    </form>
+    <ul class="space-y-2 text-sm max-h-64 overflow-y-auto">
+      <% players.forEach(p => { %>
+        <li class="flex justify-between items-center bg-navy-900 rounded-lg px-3 py-2">
+          <span class="<%= p.active ? '' : 'line-through text-stone-500' %>">
+            <%= p.name %>
+            <% if (p.username) { %><span class="text-stone-500 text-xs">(user: <%= p.username %>)</span><% } %>
+          </span>
+          <form method="POST" action="/admin/players/<%= p.id %>/toggle">
+            <button class="text-xs <%= p.active ? 'text-amber-400' : 'text-green-400' %>">
+              <%= p.active ? 'Deactivate' : 'Activate' %>
+            </button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+
+<!-- Manual Game Entry -->
+<section class="bg-navy-800 border border-navy-600 rounded-xl p-6 mt-8">
+  <h2 class="text-lg font-semibold mb-4">Manually Add Completed Game</h2>
+  <form method="POST" action="/admin/games" class="space-y-4" id="manual-game-form">
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-stone-400 mb-1">Title</label>
+        <input type="text" name="title" placeholder="e.g. Thursday Showdown"
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      </div>
+      <div>
+        <label class="block text-sm text-stone-400 mb-1">Date</label>
+        <input type="datetime-local" name="game_date"
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm text-stone-400 mb-1">Notes (optional)</label>
+      <input type="text" name="notes" placeholder="Any notes..."
+        class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+    </div>
+
+    <div>
+      <label class="block text-sm text-stone-400 mb-2">Players, Scores &amp; Winners</label>
+      <div class="grid gap-2 sm:grid-cols-2">
+        <% players.filter(p => p.active).forEach(p => { %>
+          <div class="flex items-center gap-3 bg-navy-900 border border-navy-600 rounded-lg px-3 py-2">
+            <input type="checkbox" name="player_ids" value="<%= p.id %>" class="player-check rounded text-brand-500"
+              data-id="<%= p.id %>" onchange="toggleScore(this)">
+            <span class="flex-1 text-sm"><%= p.name %></span>
+            <input type="number" name="scores[<%= p.id %>]" placeholder="Score" min="0" disabled
+              class="score-input w-20 bg-navy-800 border border-navy-500 rounded px-2 py-1 text-center text-sm disabled:opacity-40">
+            <label class="flex items-center gap-1 text-xs text-amber-400">
+              <input type="checkbox" name="winners" value="<%= p.id %>" disabled class="winner-check rounded">
+              🏆
+            </label>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-semibold px-6 py-2 rounded-lg transition">
+      Record Game
+    </button>
+  </form>
+</section>
+
+<!-- Recent Games (Admin) -->
+<section class="mt-8">
+  <h2 class="text-lg font-semibold mb-4">Recent Games (Admin)</h2>
+  <div class="bg-navy-800 border border-navy-600 rounded-xl overflow-hidden">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-navy-900 text-stone-400 text-xs uppercase">
+        <tr>
+          <th class="px-4 py-3">ID</th>
+          <th class="px-4 py-3">Title</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3">Status</th>
+          <th class="px-4 py-3">Players</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-navy-600">
+        <% games.forEach(g => { %>
+          <tr class="hover:bg-navy-750/40">
+            <td class="px-4 py-2 font-mono text-stone-500">#<%= g.id %></td>
+            <td class="px-4 py-2"><%= g.title || '—' %></td>
+            <td class="px-4 py-2 text-stone-400"><%= new Date(g.game_date).toLocaleString() %></td>
+            <td class="px-4 py-2">
+              <span class="<%= g.status === 'live' ? 'text-amber-400' : g.status === 'completed' ? 'text-green-400' : 'text-stone-500' %>">
+                <%= g.status %>
+              </span>
+            </td>
+            <td class="px-4 py-2"><%= g.player_count %></td>
+            <td class="px-4 py-2">
+              <form method="POST" action="/admin/games/<%= g.id %>/delete" onsubmit="return confirm('Delete this game permanently?')">
+                <button class="text-red-400 hover:text-red-300 text-xs">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  function toggleScore(checkbox) {
+    const row = checkbox.closest('div');
+    const scoreInput = row.querySelector('.score-input');
+    const winnerCheck = row.querySelector('.winner-check');
+    scoreInput.disabled = !checkbox.checked;
+    winnerCheck.disabled = !checkbox.checked;
+    if (!checkbox.checked) {
+      scoreInput.value = '';
+      winnerCheck.checked = false;
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>
