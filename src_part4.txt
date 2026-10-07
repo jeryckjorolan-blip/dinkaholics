@@ -1,4 +1,5 @@
- ORDER BY g.game_date DESC LIMIT 20`).all(player.id);
+ as avg_score FROM game_scores gs JOIN games g ON gs.game_id = g.id AND g.status = 'completed' WHERE gs.player_id = ?`).get(player.id);
+  const recent = db.prepare(`SELECT g.title, g.game_date, gs.score, gs.is_winner FROM game_scores gs JOIN games g ON gs.game_id = g.id WHERE gs.player_id = ? AND g.status = 'completed' ORDER BY g.game_date DESC LIMIT 20`).all(player.id);
   res.render('player', { player, stats, recent, title: player.name });
 });
 
