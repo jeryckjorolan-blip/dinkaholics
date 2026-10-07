@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-brand-400">Game History</h1>
+  <p class="text-stone-400 mt-1">All completed Winners Take All games</p>
+</div>
+
+<% if (!games || games.length === 0) { %>
+  <p class="text-stone-500 text-center py-12">No completed games yet.</p>
+<% } else { %>
+  <div class="space-y-4">
+    <% games.forEach(g => { %>
+      <div class="bg-navy-800 border border-navy-600 rounded-xl p-5">
+        <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+          <h3 class="font-semibold text-brand-300"><%= g.title || 'Game #' + g.id %></h3>
+          <span class="text-xs text-stone-500"><%= new Date(g.game_date).toLocaleString() %></span>
+        </div>
+        <% if (g.notes) { %><p class="text-xs text-stone-500 italic mb-2"><%= g.notes %></p><% } %>
+        <div class="flex flex-wrap gap-2">
+          <% (g.scores || []).forEach(s => { %>
+            <span class="bg-navy-900 border border-navy-600 text-sm px-3 py-1 rounded-full <%= s.is_winner ? 'ring-1 ring-brand-400 text-brand-300' : 'text-stone-300' %>">
+              <%= s.player_name %> · <%= s.score %><% if (s.is_winner) { %> 🏆<% } %>
+            </span>
+          <% }) %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

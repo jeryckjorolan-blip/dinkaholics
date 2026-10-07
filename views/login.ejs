@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<div class="min-h-[80vh] flex items-center justify-center">
+  <div class="bg-navy-800 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-navy-600">
+    <div class="text-center mb-8">
+      <img src="/img/logo.jpg" alt="Dinkaholics" class="w-28 h-28 mx-auto rounded-full object-cover ring-4 ring-brand-400/50 shadow-lg mb-4">
+      <h1 class="text-3xl font-bold text-brand-400 tracking-wide">Dinkaholics</h1>
+      <p class="text-brand-300/80 text-sm mt-1 font-medium tracking-wider">PLAY · CONNECT · REPEAT</p>
+      <p class="text-stone-400 mt-2 text-sm">Club Members Only</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6 text-sm">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/login" class="space-y-5">
+      <div>
+        <label class="block text-sm font-medium text-stone-300 mb-1">Username</label>
+        <input type="text" name="username" required autofocus
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
+          placeholder="Enter username">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-stone-300 mb-1">Password</label>
+        <input type="password" name="password" required
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
+          placeholder="Enter password">
+      </div>
+      <button type="submit"
+        class="w-full bg-brand-500 hover:bg-brand-400 text-navy-900 font-bold py-3 rounded-lg transition">
+        Sign In
+      </button>
+    </form>
+
+    <p class="text-center text-stone-500 text-xs mt-6">
+      Contact an admin if you need an account.
+    </p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
