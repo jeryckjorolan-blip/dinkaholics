@@ -1,0 +1,8 @@
+ ORDER BY g.game_date DESC LIMIT 20`).all(player.id);
+  res.render('player', { player, stats, recent, title: player.name });
+});
+
+app.listen(PORT, () => {
+  console.log(`\n🍺 Dinkaholics Club Tracker running at http://localhost:${PORT}`);
+  console.log(`   Default login: admin / admin123\n`);
+});
