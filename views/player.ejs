@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="mb-8">
+  <a href="/" class="text-sm text-stone-400 hover:text-brand-400">← Back to Leaderboard</a>
+  <h1 class="text-3xl font-bold text-brand-400 mt-2"><%= player.name %></h1>
+</div>
+
+<div class="grid sm:grid-cols-4 gap-4 mb-10">
+  <div class="bg-navy-800 border border-navy-600 rounded-xl p-5 text-center">
+    <div class="text-3xl font-bold text-brand-400"><%= stats.wins || 0 %></div>
+    <div class="text-sm text-stone-400 mt-1">Wins</div>
+  </div>
+  <div class="bg-navy-800 border border-navy-600 rounded-xl p-5 text-center">
+    <div class="text-3xl font-bold text-stone-200"><%= stats.games_played || 0 %></div>
+    <div class="text-sm text-stone-400 mt-1">Games Played</div>
+  </div>
+  <div class="bg-navy-800 border border-navy-600 rounded-xl p-5 text-center">
+    <div class="text-3xl font-bold text-stone-200"><%= stats.total_score || 0 %></div>
+    <div class="text-sm text-stone-400 mt-1">Total Score</div>
+  </div>
+  <div class="bg-navy-800 border border-navy-600 rounded-xl p-5 text-center">
+    <div class="text-3xl font-bold text-stone-200"><%= Number(stats.avg_score || 0).toFixed(1) %></div>
+    <div class="text-sm text-stone-400 mt-1">Avg Score</div>
+  </div>
+</div>
+
+<h2 class="text-xl font-semibold mb-4">Recent Results</h2>
+<% if (recent.length === 0) { %>
+  <p class="text-stone-500">No games yet.</p>
+<% } else { %>
+  <div class="bg-navy-800 border border-navy-600 rounded-xl overflow-hidden">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-navy-900 text-stone-400 text-xs uppercase">
+        <tr>
+          <th class="px-4 py-3">Game</th>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3 text-center">Score</th>
+          <th class="px-4 py-3 text-center">Result</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-navy-600">
+        <% recent.forEach(r => { %>
+          <tr class="hover:bg-navy-750/40">
+            <td class="px-4 py-3"><%= r.title || 'Game' %></td>
+            <td class="px-4 py-3 text-stone-400"><%= new Date(r.game_date).toLocaleDateString() %></td>
+            <td class="px-4 py-3 text-center font-semibold"><%= r.score %></td>
+            <td class="px-4 py-3 text-center">
+              <% if (r.is_winner) { %>
+                <span class="text-amber-400">🏆 Winner</span>
+              <% } else { %>
+                <span class="text-stone-500">—</span>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>
