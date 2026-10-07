@@ -1,0 +1,28 @@
+{
+  "name": "dinkaholics",
+  "version": "1.0.0",
+  "description": "Club website for tracking Winners Take All games, scores, and leaderboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "init-db": "node db/init.js"
+  },
+  "keywords": [
+    "club",
+    "leaderboard",
+    "games",
+    "dinkaholics"
+  ],
+  "author": "Dinkaholics",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  }
+}
