@@ -1,0 +1,165 @@
+<%- include('partials/header') %>
+
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-brand-400">Live Scoring</h1>
+  <p class="text-stone-400 mt-1">Join open WTA games or start scoring in real time. Highest score(s) win when you finish.</p>
+</div>
+
+<% if (msg) { %>
+  <div class="bg-green-900/40 border border-green-700 text-green-200 px-4 py-3 rounded-lg mb-6 text-sm">
+    <%= String(msg).replace(/\+/g, ' ') %>
+  </div>
+<% } %>
+<% if (error) { %>
+  <div class="bg-red-900/40 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6 text-sm">
+    <%= String(error).replace(/\+/g, ' ') %>
+  </div>
+<% } %>
+
+<div class="mb-10">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <h2 class="text-xl font-semibold text-stone-200">Open WTA Games</h2>
+    <% if (currentUser && currentUser.role === 'admin') { %>
+      <button onclick="document.getElementById('post-game-form').classList.toggle('hidden')"
+        class="bg-brand-500 hover:bg-brand-400 text-navy-900 text-sm font-semibold px-4 py-2 rounded-lg transition">
+        + Post New WTA Game
+      </button>
+    <% } %>
+  </div>
+
+  <% if (currentUser && currentUser.role === 'admin') { %>
+  <div id="post-game-form" class="hidden bg-navy-800 border border-brand-700/40 rounded-xl p-5 mb-6">
+    <h3 class="font-semibold text-brand-300 mb-3">Post a new WTA game for members to join</h3>
+    <form method="POST" action="/games/open" class="flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-xs text-stone-400 mb-1">Game Title</label>
+        <input type="text" name="title" placeholder="e.g. Friday Night WTA" required
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      </div>
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-xs text-stone-400 mb-1">Notes (optional)</label>
+        <input type="text" name="notes" placeholder="Any details..."
+          class="w-full bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      </div>
+      <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-semibold px-5 py-2 rounded-lg transition">
+        Post Game
+      </button>
+    </form>
+  </div>
+  <% } %>
+
+  <% if (!openGames || openGames.length === 0) { %>
+    <p class="text-stone-500 text-sm">No open games right now.<% if (currentUser && currentUser.role === 'admin') { %> Post one above!<% } %></p>
+  <% } else { %>
+    <div class="space-y-4">
+      <% openGames.forEach(g => { %>
+        <div class="bg-navy-800 border border-brand-700/30 rounded-xl p-5">
+          <div class="flex flex-wrap justify-between items-start gap-3 mb-3">
+            <div>
+              <h3 class="text-lg font-semibold text-brand-300"><%= g.title || 'WTA Game #' + g.id %></h3>
+              <p class="text-xs text-stone-500 mt-0.5">
+                Posted by <%= g.created_by_name || 'Admin' %><% if (g.notes) { %> · <%= g.notes %><% } %>
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <% const alreadyJoined = myPlayerId && g.scores.some(s => s.player_id === myPlayerId); %>
+              <% if (alreadyJoined) { %>
+                <form method="POST" action="/games/<%= g.id %>/leave">
+                  <button type="submit" class="bg-stone-700 hover:bg-red-800 text-stone-300 text-sm px-4 py-1.5 rounded-lg transition">Leave</button>
+                </form>
+                <span class="bg-green-900/50 text-green-300 text-sm px-3 py-1.5 rounded-lg border border-green-700/50">✓ Joined</span>
+              <% } else { %>
+                <form method="POST" action="/games/<%= g.id %>/join">
+                  <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-semibold text-sm px-5 py-1.5 rounded-lg transition">Join Game</button>
+                </form>
+              <% } %>
+              <% if (currentUser && currentUser.role === 'admin') { %>
+                <form method="POST" action="/games/<%= g.id %>/start" onsubmit="return confirm('Start this game with the current players?')">
+                  <button type="submit" class="bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg transition">Start Live</button>
+                </form>
+                <form method="POST" action="/games/<%= g.id %>/cancel-open" onsubmit="return confirm('Cancel this open game?')">
+                  <button type="submit" class="bg-stone-700 hover:bg-red-800 text-stone-400 text-sm px-3 py-1.5 rounded-lg transition">Cancel</button>
+                </form>
+              <% } %>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <% if (g.scores.length === 0) { %>
+              <span class="text-stone-500 text-sm">No players joined yet</span>
+            <% } else { %>
+              <% g.scores.forEach(s => { %>
+                <span class="bg-navy-900 border border-navy-600 text-stone-200 text-sm px-3 py-1 rounded-full"><%= s.player_name %></span>
+              <% }) %>
+              <span class="text-stone-500 text-sm self-center ml-1"><%= g.scores.length %> player<%= g.scores.length !== 1 ? 's' : '' %></span>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<hr class="border-navy-600 my-8">
+
+<div class="bg-navy-800 border border-navy-600 rounded-xl p-6 mb-8">
+  <h2 class="text-lg font-semibold mb-4">Start Live Game (pick players)</h2>
+  <form method="POST" action="/live/start" class="space-y-4">
+    <div>
+      <label class="block text-sm text-stone-400 mb-1">Game Title (optional)</label>
+      <input type="text" name="title" placeholder="e.g. Friday Night Round 3"
+        class="w-full max-w-md bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
+    </div>
+    <div>
+      <label class="block text-sm text-stone-400 mb-2">Select Players (min 2)</label>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+        <% players.forEach(p => { %>
+          <label class="flex items-center gap-2 bg-navy-900 border border-navy-600 rounded-lg px-3 py-2 cursor-pointer hover:border-brand-500 transition">
+            <input type="checkbox" name="player_ids" value="<%= p.id %>" class="rounded text-brand-500 focus:ring-brand-500">
+            <span class="text-sm"><%= p.name %></span>
+          </label>
+        <% }) %>
+      </div>
+    </div>
+    <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-semibold px-6 py-2 rounded-lg transition">Start Live Game</button>
+  </form>
+</div>
+
+<% if (liveGames.length === 0) { %>
+  <p class="text-stone-500 text-center py-8">No live games right now.</p>
+<% } else { %>
+  <h2 class="text-xl font-semibold mb-4">Active Live Games</h2>
+  <div class="space-y-6">
+    <% liveGames.forEach(g => { %>
+      <div class="bg-navy-800 border border-amber-700/40 rounded-xl p-6">
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+          <h3 class="text-lg font-semibold text-amber-300">
+            <span class="animate-pulse text-amber-400">●</span>
+            <%= g.title || 'Live Game #' + g.id %>
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <form method="POST" action="/live/<%= g.id %>/finish" onsubmit="return confirm('Finish game and declare winners based on highest score(s)?')">
+              <button type="submit" class="bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg transition">Finish & Declare Winners</button>
+            </form>
+            <form method="POST" action="/live/<%= g.id %>/cancel" onsubmit="return confirm('Cancel this game? Scores will be discarded.')">
+              <button type="submit" class="bg-stone-700 hover:bg-red-800 text-stone-300 text-sm px-3 py-1.5 rounded-lg transition">Cancel</button>
+            </form>
+          </div>
+        </div>
+        <form method="POST" action="/live/<%= g.id %>/score">
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mb-4">
+            <% g.scores.forEach(s => { %>
+              <div class="bg-navy-900 border border-navy-600 rounded-lg p-3 flex items-center justify-between gap-3">
+                <span class="font-medium text-stone-200"><%= s.player_name %></span>
+                <input type="number" name="scores[<%= s.player_id %>]" value="<%= s.score %>" min="0" step="1"
+                  class="w-24 bg-navy-800 border border-navy-500 rounded px-3 py-1.5 text-center text-lg font-bold text-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+            <% }) %>
+          </div>
+          <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-medium px-5 py-2 rounded-lg transition">Save Scores</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>
