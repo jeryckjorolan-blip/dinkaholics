@@ -1,16 +1,32 @@
 <%- include('partials/header') %>
 
-<div class="mb-8">
-  <h1 class="text-3xl font-bold text-brand-400">Leaderboard</h1>
-  <p class="text-stone-400 mt-1">Winners Take All · Ranked by wins, then total score</p>
+<!-- Club header -->
+<div class="mb-8 rounded-2xl bg-gradient-to-br from-navy-800 to-navy-850 border border-navy-600 p-6 sm:p-8">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <p class="text-brand-400 text-sm font-medium tracking-wider uppercase mb-1">Winners Take All</p>
+      <h1 class="text-3xl sm:text-4xl font-bold text-stone-100">Leaderboard</h1>
+      <p class="text-stone-400 mt-2 text-sm">Ranked by wins, then total score · Completed games only</p>
+    </div>
+    <% if (currentUser) { %>
+      <div class="text-sm text-stone-400 sm:text-right">
+        Welcome back,<br>
+        <span class="text-brand-300 font-semibold text-base"><%= currentUser.display_name %></span>
+      </div>
+    <% } %>
+  </div>
 </div>
 
 <% if (liveGames && liveGames.length > 0) { %>
-<div class="mb-8 bg-amber-900/30 border border-amber-700/50 rounded-xl p-4">
-  <h2 class="text-lg font-semibold text-amber-300 mb-2 flex items-center gap-2">
-    <span class="animate-pulse">●</span> Live Games in Progress
-  </h2>
-  <div class="flex flex-wrap gap-3">
+<div class="mb-6 bg-amber-950/40 border border-amber-700/40 rounded-xl p-4">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="relative flex h-2.5 w-2.5">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
+    </span>
+    <h2 class="text-sm font-semibold text-amber-300 uppercase tracking-wide">Live Now</h2>
+  </div>
+  <div class="flex flex-wrap gap-2">
     <% liveGames.forEach(g => { %>
       <a href="/live" class="bg-navy-800 hover:bg-navy-700 px-4 py-2 rounded-lg text-sm border border-navy-600 transition">
         <%= g.title || 'Live Game' %> · <%= g.player_count %> players
@@ -21,60 +37,68 @@
 <% } %>
 
 <% if (typeof openGames !== 'undefined' && openGames && openGames.length > 0) { %>
-<div class="mb-8 bg-brand-900/20 border border-brand-700/40 rounded-xl p-4">
-  <h2 class="text-lg font-semibold text-brand-300 mb-2">Open WTA Games — Join Now!</h2>
-  <div class="flex flex-wrap gap-3">
+<div class="mb-6 bg-brand-900/15 border border-brand-700/30 rounded-xl p-4">
+  <h2 class="text-sm font-semibold text-brand-300 uppercase tracking-wide mb-3">Open Games — Join</h2>
+  <div class="flex flex-wrap gap-2">
     <% openGames.forEach(g => { %>
-      <a href="/live" class="bg-navy-800 hover:bg-navy-700 px-4 py-2 rounded-lg text-sm border border-brand-600/50 transition flex items-center gap-2">
+      <a href="/live" class="bg-navy-800 hover:bg-navy-700 px-4 py-2 rounded-lg text-sm border border-brand-600/40 transition flex items-center gap-2">
         <span class="text-brand-400 font-medium"><%= g.title || 'WTA Game' %></span>
-        <span class="text-stone-400">· <%= g.player_count || 0 %> joined</span>
+        <span class="text-stone-500 text-xs"><%= g.player_count || 0 %> joined</span>
       </a>
     <% }) %>
   </div>
 </div>
 <% } %>
 
-<!-- Leaderboard Table -->
+<!-- Leaderboard -->
 <div class="bg-navy-800 rounded-xl border border-navy-600 overflow-hidden mb-10">
   <div class="overflow-x-auto">
     <table class="w-full text-left">
-      <thead class="bg-navy-750 text-stone-400 text-xs uppercase tracking-wider">
-        <tr>
-          <th class="px-4 py-3">#</th>
-          <th class="px-4 py-3">Player</th>
-          <th class="px-4 py-3 text-center">Wins</th>
-          <th class="px-4 py-3 text-center">Games</th>
-          <th class="px-4 py-3 text-center">Win %</th>
-          <th class="px-4 py-3 text-center">Total Score</th>
-          <th class="px-4 py-3 text-center">Avg Score</th>
+      <thead>
+        <tr class="border-b border-navy-600 text-stone-500 text-xs uppercase tracking-wider">
+          <th class="px-4 py-3.5 font-medium w-14">Rank</th>
+          <th class="px-4 py-3.5 font-medium">Player</th>
+          <th class="px-4 py-3.5 font-medium text-center">Wins</th>
+          <th class="px-4 py-3.5 font-medium text-center hidden sm:table-cell">Games</th>
+          <th class="px-4 py-3.5 font-medium text-center">Win %</th>
+          <th class="px-4 py-3.5 font-medium text-center hidden md:table-cell">Total</th>
+          <th class="px-4 py-3.5 font-medium text-center hidden md:table-cell">Avg</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-navy-600">
+      <tbody class="divide-y divide-navy-700/80">
         <% if (leaderboard.length === 0) { %>
           <tr>
-            <td colspan="7" class="px-4 py-8 text-center text-stone-500">No games recorded yet. Start tracking!</td>
+            <td colspan="7" class="px-4 py-12 text-center text-stone-500">
+              No completed games yet.<br>
+              <span class="text-sm text-stone-600">Scores will show here after the first finished game.</span>
+            </td>
           </tr>
         <% } %>
         <% leaderboard.forEach((p, i) => { %>
-          <tr class="hover:bg-navy-750/50 transition <%= i === 0 && p.wins > 0 ? 'bg-amber-900/20' : '' %>">
-            <td class="px-4 py-3 font-mono text-stone-400">
-              <% if (i === 0 && p.wins > 0) { %><span class="text-2xl">🥇</span>
-              <% } else if (i === 1 && p.wins > 0) { %><span class="text-xl">🥈</span>
-              <% } else if (i === 2 && p.wins > 0) { %><span class="text-xl">🥉</span>
-              <% } else { %><%= i + 1 %><% } %>
+          <tr class="hover:bg-navy-750/40 transition <%= i < 3 && p.wins > 0 ? 'bg-navy-750/20' : '' %>">
+            <td class="px-4 py-3.5">
+              <% if (i === 0 && p.wins > 0) { %>
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/20 text-amber-300 font-bold text-sm">1</span>
+              <% } else if (i === 1 && p.wins > 0) { %>
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-stone-400/20 text-stone-300 font-bold text-sm">2</span>
+              <% } else if (i === 2 && p.wins > 0) { %>
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-700/20 text-orange-300 font-bold text-sm">3</span>
+              <% } else { %>
+                <span class="text-stone-500 font-mono text-sm pl-2"><%= i + 1 %></span>
+              <% } %>
             </td>
-            <td class="px-4 py-3">
-              <a href="/player/<%= p.id %>" class="font-semibold text-brand-300 hover:text-brand-400 transition">
+            <td class="px-4 py-3.5">
+              <a href="/player/<%= p.id %>" class="font-semibold text-stone-100 hover:text-brand-400 transition">
                 <%= p.name %>
               </a>
             </td>
-            <td class="px-4 py-3 text-center font-bold text-brand-400"><%= p.wins %></td>
-            <td class="px-4 py-3 text-center text-stone-300"><%= p.games_played %></td>
-            <td class="px-4 py-3 text-center">
+            <td class="px-4 py-3.5 text-center font-bold text-brand-400"><%= p.wins %></td>
+            <td class="px-4 py-3.5 text-center text-stone-400 hidden sm:table-cell"><%= p.games_played %></td>
+            <td class="px-4 py-3.5 text-center">
               <span class="<%= p.win_rate >= 50 ? 'text-green-400' : 'text-stone-400' %>"><%= p.win_rate %>%</span>
             </td>
-            <td class="px-4 py-3 text-center text-stone-200"><%= p.total_score %></td>
-            <td class="px-4 py-3 text-center text-stone-400"><%= Number(p.avg_score).toFixed(1) %></td>
+            <td class="px-4 py-3.5 text-center text-stone-300 hidden md:table-cell"><%= p.total_score %></td>
+            <td class="px-4 py-3.5 text-center text-stone-500 hidden md:table-cell"><%= Number(p.avg_score).toFixed(1) %></td>
           </tr>
         <% }) %>
       </tbody>
@@ -84,19 +108,21 @@
 
 <!-- Recent Games -->
 <div>
-  <h2 class="text-xl font-semibold mb-4 text-stone-200">Recent Games</h2>
+  <h2 class="text-lg font-semibold mb-4 text-stone-200">Recent Games</h2>
   <% if (recentGames.length === 0) { %>
-    <p class="text-stone-500">No games yet.</p>
+    <div class="bg-navy-800 border border-navy-600 rounded-xl p-8 text-center text-stone-500">
+      No games recorded yet.
+    </div>
   <% } else { %>
     <div class="grid gap-3 sm:grid-cols-2">
       <% recentGames.forEach(g => { %>
-        <div class="bg-navy-800 border border-navy-600 rounded-lg p-4">
-          <div class="flex justify-between items-start mb-2">
+        <div class="bg-navy-800 border border-navy-600 rounded-xl p-4 hover:border-navy-500 transition">
+          <div class="flex justify-between items-start mb-2 gap-2">
             <h3 class="font-medium text-brand-300"><%= g.title || 'Game #' + g.id %></h3>
-            <span class="text-xs text-stone-500"><%= new Date(g.game_date).toLocaleDateString() %></span>
+            <span class="text-xs text-stone-500 whitespace-nowrap"><%= new Date(g.game_date).toLocaleDateString() %></span>
           </div>
-          <p class="text-sm text-stone-400"><%= g.participants || 'No scores' %></p>
-          <% if (g.notes) { %><p class="text-xs text-stone-500 mt-1 italic"><%= g.notes %></p><% } %>
+          <p class="text-sm text-stone-400 leading-relaxed"><%= g.participants || 'No scores' %></p>
+          <% if (g.notes) { %><p class="text-xs text-stone-500 mt-2 italic"><%= g.notes %></p><% } %>
         </div>
       <% }) %>
     </div>
