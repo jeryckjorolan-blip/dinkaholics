@@ -1,2 +1,7 @@
-const fs=require('fs');const path=require('path');
-eval(fs.readFileSync(path.join(__dirname,'m0.js'),'utf8')+fs.readFileSync(path.join(__dirname,'m1.js'),'utf8')+fs.readFileSync(path.join(__dirname,'m2.js'),'utf8')+fs.readFileSync(path.join(__dirname,'m3.js'),'utf8'));
+const fs = require('fs');
+const path = require('path');
+eval(
+  fs.readFileSync(path.join(__dirname, 'app-part1.js'), 'utf8') +
+  fs.readFileSync(path.join(__dirname, 'app-part2a.js'), 'utf8') +
+  fs.readFileSync(path.join(__dirname, 'app-part2b.js'), 'utf8')
+);
