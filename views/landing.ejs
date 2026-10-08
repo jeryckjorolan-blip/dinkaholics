@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<section class="hero-bg relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 md:py-28">
+    <p class="text-brand-400 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase mb-4">PLAY · CONNECT · REPEAT</p>
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-none mb-3">
+      DINKAHOLICS <span class="text-brand-400">🏓</span>
+    </h1>
+    <p class="text-stone-300 text-lg sm:text-xl max-w-lg mb-8 font-medium">
+      Your game. Your people. Your court.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href="/login" class="inline-flex items-center justify-center bg-brand-500 hover:bg-brand-400 text-navy-900 font-bold px-7 py-3 rounded-xl transition shadow-lg shadow-brand-500/25 text-sm sm:text-base">
+        LOGIN
+      </a>
+      <a href="/signup" class="inline-flex items-center justify-center bg-navy-800/80 hover:bg-navy-700 border border-navy-500 text-white font-semibold px-7 py-3 rounded-xl transition text-sm sm:text-base">
+        JOIN DINKAHOLICS
+      </a>
+    </div>
+    <div class="mt-10 flex flex-wrap gap-6 text-sm text-stone-400">
+      <div><span class="text-2xl font-bold text-white block"><%= stats.players %></span> Players</div>
+      <div><span class="text-2xl font-bold text-white block"><%= stats.matches %></span> Matches</div>
+      <div><span class="text-2xl font-bold text-brand-400 block"><%= stats.open %></span> Open games</div>
+    </div>
+  </div>
+</section>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-14">
+    <% const features = [
+      { icon: '🏓', title: 'Players', desc: 'Club roster & profiles' },
+      { icon: '🏆', title: 'Leaderboard', desc: 'Live rankings & points' },
+      { icon: '📅', title: 'Upcoming', desc: 'Open WTA games' },
+      { icon: '📊', title: 'Rankings', desc: 'Wins, streaks & rate' },
+      { icon: '🔥', title: 'Matches', desc: 'Recent results' },
+      { icon: '👥', title: 'Community', desc: 'Your crew on court' },
+      { icon: '🎯', title: 'Tournaments', desc: 'Brackets & champions' },
+      { icon: '⚡', title: 'Live Score', desc: 'Track games live' }
+    ]; %>
+    <% features.forEach(f => { %>
+    <div class="bg-navy-850 border border-navy-600/50 rounded-xl p-4 sm:p-5 card-hover">
+      <div class="text-2xl mb-2"><%= f.icon %></div>
+      <h3 class="font-semibold text-stone-100 text-sm sm:text-base"><%= f.title %></h3>
+      <p class="text-stone-500 text-xs sm:text-sm mt-0.5"><%= f.desc %></p>
+    </div>
+    <% }) %>
+  </div>
+
+  <% if (leaderboard && leaderboard.length > 0) { %>
+  <section class="mb-14">
+    <div class="flex items-end justify-between mb-5">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white">Top Rankings</h2>
+        <p class="text-stone-500 text-sm mt-1">Who’s owning the court</p>
+      </div>
+      <a href="/login" class="text-brand-400 text-sm font-medium hover:text-brand-300">Sign in to view all →</a>
+    </div>
+    <div class="bg-navy-850/90 rounded-2xl border border-navy-600/50 overflow-hidden">
+      <ul class="divide-y divide-navy-700/50">
+        <% leaderboard.forEach((p, i) => { %>
+        <li class="flex items-center gap-4 px-4 sm:px-5 py-3.5">
+          <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0
+            <%= i === 0 ? 'medal-1 text-navy-900' : i === 1 ? 'medal-2 text-navy-900' : i === 2 ? 'medal-3 text-white' : 'bg-navy-800 text-stone-400' %>">
+            <%= i + 1 %>
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-stone-100 truncate"><%= p.name %></p>
+            <p class="text-xs text-stone-500">W <%= p.wins %> · L <%= p.losses %> · <%= p.win_rate %>%</p>
+          </div>
+          <span class="text-brand-400 font-bold text-sm tabular-nums"><%= p.points.toLocaleString() %> pts</span>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (recentGames && recentGames.length > 0) { %>
+  <section class="mb-10">
+    <h2 class="text-xl sm:text-2xl font-bold text-white mb-5">Recent Matches</h2>
+    <div class="space-y-2">
+      <% recentGames.forEach(g => { %>
+      <div class="bg-navy-850 border border-navy-600/40 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <div>
+          <p class="font-medium text-stone-200 text-sm"><%= g.title || 'Match' %></p>
+          <p class="text-xs text-stone-500 truncate max-w-md"><%= g.participants || '—' %></p>
+        </div>
+        <span class="text-xs text-stone-600 shrink-0"><%= g.game_date ? new Date(g.game_date).toLocaleDateString() : '' %></span>
+      </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <section class="bg-gradient-to-br from-navy-800 to-navy-850 border border-brand-600/20 rounded-2xl p-8 sm:p-10 text-center">
+    <h2 class="text-2xl font-bold text-white mb-2">Ready to dink?</h2>
+    <p class="text-stone-400 mb-6 max-w-md mx-auto">Join the club, climb the rankings, and find your next game.</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="/signup" class="bg-brand-500 hover:bg-brand-400 text-navy-900 font-bold px-6 py-3 rounded-xl transition">JOIN DINKAHOLICS</a>
+      <a href="/login" class="border border-navy-500 hover:border-brand-500/50 text-stone-200 font-semibold px-6 py-3 rounded-xl transition">LOGIN</a>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
