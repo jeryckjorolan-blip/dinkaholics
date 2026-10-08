@@ -1,4 +1,8 @@
-const fs=require('fs');const path=require('path');const zlib=require('zlib');
-const parts=[];
-for(let i=0;i<3;i++) parts.push(fs.readFileSync(path.join(__dirname,'gzp'+i+'.txt'),'utf8').trim());
-eval(zlib.inflateSync(Buffer.from(parts.join(''),'base64')).toString('utf8'));
+const fs = require('fs');
+const path = require('path');
+eval(
+  fs.readFileSync(path.join(__dirname, 'ap0.js'), 'utf8') +
+  fs.readFileSync(path.join(__dirname, 'ap1.js'), 'utf8') +
+  fs.readFileSync(path.join(__dirname, 'ap2.js'), 'utf8') +
+  fs.readFileSync(path.join(__dirname, 'ap3.js'), 'utf8')
+);
