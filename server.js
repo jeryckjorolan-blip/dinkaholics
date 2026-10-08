@@ -1,8 +1,2 @@
-const fs = require('fs');
-const path = require('path');
-eval(
-  fs.readFileSync(path.join(__dirname, 'ap0.js'), 'utf8') +
-  fs.readFileSync(path.join(__dirname, 'ap1.js'), 'utf8') +
-  fs.readFileSync(path.join(__dirname, 'ap2.js'), 'utf8') +
-  fs.readFileSync(path.join(__dirname, 'ap3.js'), 'utf8')
-);
+const fs=require('fs');const path=require('path');
+eval(fs.readFileSync(path.join(__dirname,'ap0.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap1.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap2.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap3.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap4.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap5.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap6.js'),'utf8')+fs.readFileSync(path.join(__dirname,'ap7.js'),'utf8'));
