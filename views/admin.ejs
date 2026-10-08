@@ -11,6 +11,35 @@
   </div>
 <% } %>
 
+<% if (typeof pendingUsers !== 'undefined' && pendingUsers && pendingUsers.length > 0) { %>
+<section class="bg-amber-950/30 border border-amber-600/40 rounded-xl p-6 mb-8">
+  <div class="flex items-center gap-2 mb-4">
+    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-navy-900 text-xs font-bold"><%= pendingUsers.length %></span>
+    <h2 class="text-lg font-semibold text-amber-300">Pending Signups — Approve to let them in</h2>
+  </div>
+  <p class="text-sm text-stone-400 mb-4">Someone requested an account. Approve so they can log in, or reject to remove the request. Tell the group chat once approved.</p>
+  <ul class="space-y-3">
+    <% pendingUsers.forEach(u => { %>
+      <li class="flex flex-wrap justify-between items-center gap-3 bg-navy-900/80 rounded-lg px-4 py-3 border border-navy-600">
+        <div>
+          <span class="font-semibold text-stone-100"><%= u.display_name %></span>
+          <span class="text-stone-500 text-sm"> @<%= u.username %></span>
+          <span class="text-stone-600 text-xs ml-2"><%= new Date(u.created_at).toLocaleString() %></span>
+        </div>
+        <div class="flex gap-2">
+          <form method="POST" action="/admin/users/<%= u.id %>/approve">
+            <button type="submit" class="bg-brand-500 hover:bg-brand-400 text-navy-900 text-sm font-semibold px-4 py-1.5 rounded-lg transition">Approve</button>
+          </form>
+          <form method="POST" action="/admin/users/<%= u.id %>/reject" onsubmit="return confirm('Reject and delete this signup?')">
+            <button type="submit" class="bg-stone-700 hover:bg-red-800 text-stone-300 text-sm px-4 py-1.5 rounded-lg transition">Reject</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>
+
 <div class="grid lg:grid-cols-2 gap-8">
 
   <!-- Create User -->
@@ -98,7 +127,7 @@
     </div>
 
     <div>
-      <label class="block text-sm text-stone-400 mb-2">Players, Scores &amp; Winners</label>
+      <label class="block text-sm text-stone-400 mb-2">Players, Scores & Winners</label>
       <div class="grid gap-2 sm:grid-cols-2">
         <% players.filter(p => p.active).forEach(p => { %>
           <div class="flex items-center gap-3 bg-navy-900 border border-navy-600 rounded-lg px-3 py-2">
