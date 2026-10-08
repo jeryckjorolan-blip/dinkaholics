@@ -3,7 +3,9 @@
 <div class="min-h-[80vh] flex items-center justify-center">
   <div class="bg-navy-800 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-navy-600">
     <div class="text-center mb-8">
-      <img src="/img/logo.jpg" alt="Dinkaholics" class="w-28 h-28 mx-auto rounded-full object-cover ring-4 ring-brand-400/50 shadow-lg mb-4">
+      <div class="w-20 h-20 mx-auto rounded-full bg-navy-900 border-2 border-brand-400/50 flex items-center justify-center mb-4 overflow-hidden">
+        <img src="/img/logo.jpg" alt="Dinkaholics" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-3xl font-bold text-brand-400\'>D</span>'">
+      </div>
       <h1 class="text-3xl font-bold text-brand-400 tracking-wide">Dinkaholics</h1>
       <p class="text-brand-300/80 text-sm mt-1 font-medium tracking-wider">PLAY · CONNECT · REPEAT</p>
       <p class="text-stone-400 mt-2 text-sm">Club Members Only</p>
@@ -34,8 +36,9 @@
       </button>
     </form>
 
-    <p class="text-center text-stone-500 text-xs mt-6">
-      Contact an admin if you need an account.
+    <p class="text-center text-stone-400 text-sm mt-6">
+      New here?
+      <a href="/signup" class="text-brand-400 hover:text-brand-300 font-medium">Request an account</a>
     </p>
   </div>
 </div>
