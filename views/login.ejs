@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<div class="min-h-[80vh] flex items-center justify-center">
+<div class="min-h-[80vh] flex items-center justify-center px-4">
   <div class="bg-navy-800 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-navy-600">
     <div class="text-center mb-8">
       <div class="w-20 h-20 mx-auto rounded-full bg-navy-900 border-2 border-brand-400/50 flex items-center justify-center mb-4 overflow-hidden">
@@ -17,19 +17,24 @@
       </div>
     <% } %>
 
-    <form method="POST" action="/login" class="space-y-5">
+    <form method="POST" action="/login" class="space-y-5" autocomplete="on">
       <div>
         <label class="block text-sm font-medium text-stone-300 mb-1">Username</label>
-        <input type="text" name="username" required autofocus
+        <input type="text" name="username" required autofocus autocomplete="username"
           class="w-full bg-navy-900 border border-navy-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
           placeholder="Enter username">
       </div>
       <div>
         <label class="block text-sm font-medium text-stone-300 mb-1">Password</label>
-        <input type="password" name="password" required
+        <input type="password" name="password" required autocomplete="current-password"
           class="w-full bg-navy-900 border border-navy-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
           placeholder="Enter password">
       </div>
+      <label class="flex items-center gap-2 text-sm text-stone-300 cursor-pointer select-none">
+        <input type="checkbox" name="rememberMe" value="on"
+          class="rounded border-navy-500 text-brand-500 focus:ring-brand-400 bg-navy-900">
+        Remember me (stay logged in)
+      </label>
       <button type="submit"
         class="w-full bg-brand-500 hover:bg-brand-400 text-navy-900 font-bold py-3 rounded-lg transition">
         Sign In
